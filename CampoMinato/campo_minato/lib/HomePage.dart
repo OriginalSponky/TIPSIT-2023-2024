@@ -226,7 +226,7 @@ class _HomePageState extends State<HomePage> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            backgroundColor: Colors.grey[800],
+            backgroundColor: Colors.blue[800],
             title: Center(
                 child: Text(
               'HAI PERSO!',
@@ -251,7 +251,7 @@ class _HomePageState extends State<HomePage> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            backgroundColor: Colors.grey[700],
+            backgroundColor: Colors.blue[700],
             title: Center(
                 child: Text(
               'HAI VINTO!',
@@ -268,7 +268,7 @@ class _HomePageState extends State<HomePage> {
                   child : ClipRRect(
                     borderRadius : BorderRadius.circular(10),
                     child : Container(
-                      color : Colors.grey[300],
+                      color : Colors.blue[300],
                       child : Padding(
                         padding : const EdgeInsets.all(10.0), // grandezza del pulsante restart
                         child : Icon(Icons.refresh, size : 30),
@@ -300,12 +300,12 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200],
+      backgroundColor: Colors.blue[200],
       body: Column(children: [
         //game stats and menu
         Container(
             height: 150,
-            color: Colors.grey,
+            color: Colors.blue,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -324,7 +324,7 @@ class _HomePageState extends State<HomePage> {
                   onTap: restartGame,
                   child: Card(
                       child: Icon(Icons.refresh, color: Colors.white, size: 40),
-                      color: Colors.grey[700]),
+                      color: Colors.blue[700]),
                 ),
 
                 //display time taken
@@ -374,7 +374,7 @@ class _HomePageState extends State<HomePage> {
         //branding Scrive la parte in basso del telefono
         Padding(
           padding: const EdgeInsets.only(bottom: 40.0),
-          child: Text("F A T T O D A K A T C H"),
+          child: Text("Campo Minato"),
         )
       ]),
     );
