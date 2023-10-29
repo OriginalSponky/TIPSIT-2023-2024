@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:campo_minato/MyBomb.dart';
 import 'package:campo_minato/MyNumberBox.dart';
 import 'package:flutter/material.dart';
@@ -16,16 +18,16 @@ class _HomePageState extends State<HomePage> {
   int numberInEachRow = 9;
   // [number of bombs around, revealed = true/false ]
   var squareStatus = [];
-
+  
   //bomb locations
-  final List<int> bombLocation = [
-    4,
-    5,
-    7,
-    41,
-    42,
-    43,
-    61,
+  List<int> bombLocation = [
+    Random().nextInt(80),
+    Random().nextInt(80),
+    Random().nextInt(80),
+    Random().nextInt(80),
+    Random().nextInt(80),
+    Random().nextInt(80),
+    Random().nextInt(80),
   ];
   bool bombsRevealed = false;
   @override
@@ -40,6 +42,15 @@ class _HomePageState extends State<HomePage> {
 
   void restartGame() {
     setState(() {
+      bombLocation = [
+        Random().nextInt(80),
+        Random().nextInt(80),
+        Random().nextInt(80),
+        Random().nextInt(80),
+        Random().nextInt(80),
+        Random().nextInt(80),
+        Random().nextInt(80),
+      ];
       bombsRevealed = false;
       for (int i = 0; i < numberOfSquares; i++) {
         squareStatus[i][1] = false;
@@ -371,7 +382,7 @@ class _HomePageState extends State<HomePage> {
         //branding Scrive la parte in basso del telefono
         Padding(
           padding: const EdgeInsets.only(bottom: 40.0),
-          child: Text("Campo Minato"),
+          child: Text("M I N  E S W E E P E R"),
         )
       ]),
     );
