@@ -328,12 +328,9 @@ class _HomePageState extends State<HomePage> {
                 ),
 
                 //display time taken
+                
                 Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('0', style: TextStyle(fontSize: 40)),
-                    Text('T I M E'),
-                  ],
+                  
                 )
               ],
             )),
