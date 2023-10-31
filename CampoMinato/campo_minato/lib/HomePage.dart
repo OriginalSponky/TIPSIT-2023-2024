@@ -51,6 +51,7 @@ class _HomePageState extends State<HomePage> {
         Random().nextInt(80),
         Random().nextInt(80),
       ];
+      scanBombs();
       bombsRevealed = false;
       for (int i = 0; i < numberOfSquares; i++) {
         squareStatus[i][1] = false;
