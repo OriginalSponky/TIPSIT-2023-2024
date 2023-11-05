@@ -7,7 +7,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -39,10 +38,8 @@ enum Stato {
   bool isRunning = false;
   Stato st = Stato.stop;
   List<int> partials = List<int>.generate(10, (index) => 0);
-  //late Stream<int> timerStream = timedCounter(const Duration(seconds: 1), 9999999999);
   late StreamSubscription<int> timerSubscription;
   String stPartials = "";
-  //var counterStream = timedCounter(const Duration(seconds: 1), 15);
 
 
   Stream<int> timedCounter(Duration interval, [int? maxCount]) async* {

@@ -1,16 +1,30 @@
-# flutter_application_1
+# Cronometro
 
-A new Flutter project.
+Questo progetto implementa un semplice cronometro utilizzando il linguaggio di programmazione Dart e la classe `StreamSubscription` per gestire gli aggiornamenti del cronometro. Il cronometro può essere avviato, fermato e azzerato.
 
-## Getting Started
+## Funzionalità principali
 
-This project is a starting point for a Flutter application.
+- Avvio e arresto del cronometro.
+- Azzeramento del cronometro.
+- Visualizzazione del tempo trascorso in formato HH:MM:SS.
+- Creare e guardare i parziali
+## Requisiti
 
-A few resources to get you started if this is your first Flutter project:
+- Dart SDK installato sul tuo sistema.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Istruzioni per l'esecuzione
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1. Clona questo repository o scarica i file sorgente.
+
+2. Naviga nella directory del progetto.
+
+3. Esegui il comando seguente per avviare l'applicazione:
+
+## Utilizzo
+1. Avvia il cronometro utilizzando il comando "start".
+
+2. Puoi mettere in pausa il cronometro utilizzando il comando "stop".
+
+3. Per azzerare il cronometro, utilizza il comando "reset".
+
+4. Per salvare un parziale, utilizza il comando "parziale".
