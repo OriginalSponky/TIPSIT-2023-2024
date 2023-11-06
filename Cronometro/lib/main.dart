@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Cronometro'),
     );
   }
 }
@@ -35,6 +35,7 @@ enum Stato {
 
  class _MyHomePageState extends State<MyHomePage> {
   int time = 0;
+  int par = 1;
   bool isRunning = false;
   Stato st = Stato.stop;
   List<int> partials = List<int>.generate(10, (index) => 0);
@@ -56,7 +57,7 @@ enum Stato {
       isRunning = true;
       if(st == Stato.stop){
         st = Stato.on;
-        late Stream<int> timerStream = timedCounter(const Duration(seconds: 1), 9999999999);
+        Stream<int> timerStream = timedCounter(const Duration(seconds: 1), 9999999999);
         setState(() {
           timerSubscription = timerStream.listen((int i) async { 
             setState(() {
@@ -103,13 +104,11 @@ enum Stato {
   } 
 
   String _convertDisplay(int l){
-    int ss=l;
-    while(ss>60){
-    ss -= 60;}
+    int ss=l%60;
     int MM = _converter(l);
     int HH = _converter(MM);
     String strss= ss.toString();
-    String strMM= MM.toString();
+    String strMM= (MM%60).toString();
     String strHH= HH.toString();
     if(strHH.length==1) {
         strHH = "0" + strHH;
@@ -127,9 +126,10 @@ enum Stato {
 
   void _addPartial(){
     setState(() {
-      if(8*10 > stPartials.length){
+      if(10*10 > stPartials.length){
       partials.add(time);
-      stPartials = stPartials + _convertDisplay(time)+"\n";
+      stPartials = stPartials+par.toString()+")"+ _convertDisplay(time)+"\n";
+      par++;
       print(stPartials);
       }
     });        
