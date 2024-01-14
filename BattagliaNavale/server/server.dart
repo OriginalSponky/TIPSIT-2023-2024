@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'battleShipLibrary.dart';
+import '../battleShipLibrary.dart';
 import 'dart:convert';
 
 late ServerSocket server;

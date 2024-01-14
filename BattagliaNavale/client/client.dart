@@ -1,7 +1,7 @@
 //import 'dart:html';
 import 'dart:io';
 import 'dart:convert';
-import 'battleShipLibrary.dart';
+import '../battleShipLibrary.dart';
 
 late Socket socket;
 
