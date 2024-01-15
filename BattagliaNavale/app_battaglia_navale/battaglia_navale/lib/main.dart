@@ -165,10 +165,288 @@ class _BattleShipGameState extends State<BattleShipGame> {
     );
   }
 
-  void setPlayerShip() {
-    // Implement the logic for setting the player's ships
-    // You can use a dialog or another UI for the player to input ship coordinates
-    // and then update the playerShips list accordingly.
+  void setPlayerShip() async {
+    for (int i = 0; i < 5; i++) {
+      print("Select the starting point for Ship ${i + 1}");
+      Point selectedPoint = await getPlayerInput();
+
+      Map<String, dynamic> shipParams = await getShipParameters();
+
+      setState(() {
+        Ship currentShip = Ship(shipParams['length']);
+        bool isVertical = shipParams['isVertical'];
+
+        if (!currentShip.isPlaced() &&
+            freePlace(currentShip.locations, selectedPoint.x, selectedPoint.y, currentShip.length, isVertical)) {
+          for (int i = 0; i < currentShip.length; i++) {
+            if (isVertical) {
+              currentShip.locations.add(Point(selectedPoint.x, selectedPoint.y + i));
+            } else {
+              currentShip.locations.add(Point(selectedPoint.x + i, selectedPoint.y));
+            }
+          }
+
+          if (currentShip.isPlaced()) {
+            playerShips.add(currentShip);
+          }
+        }
+      });
+    }
+  }
+
+  Future<Map<String, dynamic>> getShipParameters() async {
+    bool isVertical = false;
+    int selectedLength = 1;
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Select Ship Parameters'),
+          content: Column(
+            children: [
+              Text('Select the orientation and length for the ship.'),
+              Row(
+                children: [
+                  Radio<bool>(
+                    value: false,
+                    groupValue: isVertical,
+                    onChanged: (value) {
+                      isVertical = value ?? false;
+                    },
+                  ),
+                  Text('Horizontal'),
+                ],
+              ),
+              Row(
+                children: [
+                  Radio<bool>(
+                    value: true,
+                    groupValue: isVertical,
+                    onChanged: (value) {
+                      isVertical = value ?? false;
+                    },
+                  ),
+                  Text('Vertical'),
+                ],
+              ),
+              DropdownButton<int>(
+                value: selectedLength,
+                items: [1, 2, 3].map((int length) {
+                  return DropdownMenuItem<int>(
+                    value: length,
+                    child: Text('Length: $length'),
+                  );
+                }).toList(),
+                onChanged: (int? newValue) {
+                  if (newValue != null) {
+                    selectedLength = newValue;
+                  }
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop({'isVertical': isVertical, 'length': selectedLength});
+              },
+              child: Text('Select'),
+            ),
+          ],
+        );
+      },
+    );
+
+    return {'isVertical': isVertical, 'length': selectedLength};
+  }
+
+
+  Future<Map<String, dynamic>> getOrientationAndLengthInput() async {
+    bool isVertical = false;
+    int selectedLength = 1;
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Select Orientation and Length'),
+          content: Column(
+            children: [
+              Text('Select the orientation and length for the ship.'),
+              Row(
+                children: [
+                  Radio<bool>(
+                    value: false,
+                    groupValue: isVertical,
+                    onChanged: (value) {
+                      isVertical = value ?? false;
+                    },
+                  ),
+                  Text('Horizontal'),
+                ],
+              ),
+              Row(
+                children: [
+                  Radio<bool>(
+                    value: true,
+                    groupValue: isVertical,
+                    onChanged: (value) {
+                      isVertical = value ?? false;
+                    },
+                  ),
+                  Text('Vertical'),
+                ],
+              ),
+              DropdownButton<int>(
+                value: selectedLength,
+                items: [1, 2, 3].map((int length) {
+                  return DropdownMenuItem<int>(
+                    value: length,
+                    child: Text('Length: $length'),
+                  );
+                }).toList(),
+                onChanged: (int? newValue) {
+                  if (newValue != null) {
+                    selectedLength = newValue;
+                  }
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop({'isVertical': isVertical, 'length': selectedLength});
+              },
+              child: Text('Select'),
+            ),
+          ],
+        );
+      },
+    );
+
+    return {'isVertical': isVertical, 'length': selectedLength};
+  }
+
+  Future<bool> getOrientationInput() async {
+    bool isVertical = false; // Default to horizontal
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Select Orientation'),
+          content: Column(
+            children: [
+              Text('Select the orientation for the ship.'),
+              Row(
+                children: [
+                  Radio<bool>(
+                    value: false,
+                    groupValue: isVertical,
+                    onChanged: (value) {
+                      isVertical = value ?? false;
+                    },
+                  ),
+                  Text('Horizontal'),
+                ],
+              ),
+              Row(
+                children: [
+                  Radio<bool>(
+                    value: true,
+                    groupValue: isVertical,
+                    onChanged: (value) {
+                      isVertical = value ?? false;
+                    },
+                  ),
+                  Text('Vertical'),
+                ],
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(isVertical);
+              },
+              child: Text('Select'),
+            ),
+          ],
+        );
+      },
+    );
+
+    return isVertical;
+  }
+
+  Future<Point> getPlayerInput() async {
+    // Implement the logic to get player input for ship placement
+    // You can use a dialog or another UI to get the coordinates from the player
+    // For simplicity, I'll use a basic dialog for demonstration purposes
+
+    Point selectedPoint = Point(0, 0); // Initialize with invalid values
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Select Starting Point'),
+          content: Column(
+            children: [
+              Text('Select the starting point for the ship.'),
+              TextField(
+                decoration: InputDecoration(labelText: 'X Coordinate'),
+                onChanged: (value) {
+                  selectedPoint.x = int.tryParse(value) ?? 0;
+                },
+              ),
+              TextField(
+                decoration: InputDecoration(labelText: 'Y Coordinate'),
+                onChanged: (value) {
+                  selectedPoint.y = int.tryParse(value) ?? 0;
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(selectedPoint);
+              },
+              child: Text('Select'),
+            ),
+          ],
+        );
+      },
+    );
+
+    return selectedPoint;
   }
 
   void setPlayerShipLocation(Point selectedPoint) {
