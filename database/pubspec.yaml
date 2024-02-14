@@ -1,0 +1,34 @@
+name: database
+description: A new Flutter project.
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.1.4 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  floor: ^1.4.2
+
+
+  cupertino_icons: ^1.0.2
+
+dev_dependencies:
+
+  floor_generator: any
+  build_runner: any
+
+
+  flutter_test:
+    sdk: flutter
+
+
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
+
+
