@@ -1,16 +1,19 @@
 # database
 
-A new Flutter project.
+Un'app di Flutter che utilizza Floor per la gestione di un database SQLite locale. L'app permette agli utenti di pubblicare nuovi post, visualizzare i post esistenti, aggiungere commenti ai post e eliminare i post.
 
-## Getting Started
+## Funzionalità
 
-This project is a starting point for a Flutter application.
+- Aggiunta di nuovi post con titolo e contenuto.
+- Visualizzazione di tutti i post con la possibilità di espandere ogni post per vedere i commenti.
+- Aggiunta di commenti ai post esistenti.
+- Eliminazione di post.
 
-A few resources to get you started if this is your first Flutter project:
+## Configurazione
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+    1. Clona il repository: https://github.com/OriginalSponky/TIPSIT-2023-2024/tree/main/database
+    2. Con il CMD naviga nella directory del progetto  
+    3. Esegui il comando flutter pub get per installare le dipendenze del progetto
+    4. Esegui il comando flutter run per avviare l'applicazione
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+    
