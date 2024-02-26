@@ -90,14 +90,20 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  Widget _buildPostTile(BuildContext context, Post post) {
+ Widget _buildPostTile(BuildContext context, Post post) {
     return Card(
       margin: EdgeInsets.all(8.0),
       child: ExpansionTile(
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Post ID: ${post.id}, Title: ${post.title}, Content: ${post.content}'),
+            Expanded(
+              child: Text(
+                'Post ID: ${post.id}, Title: ${post.title}, Content: ${post.content}',
+                maxLines: 3, // Limita il numero di righe
+                overflow: TextOverflow.ellipsis, // Aggiunge "..." se il testo è troppo lungo
+              ),
+            ),
             IconButton(
               icon: Icon(Icons.delete),
               onPressed: () async {
@@ -127,7 +133,11 @@ class _MyAppState extends State<MyApp> {
               for (final comment in comments)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Text('Comment ID: ${comment.id}, Post ID: ${comment.postId}, Text: ${comment.text}'),
+                  child: Text(
+                    'Comment ID: ${comment.id}, Post ID: ${comment.postId}, Text: ${comment.text}',
+                    maxLines: 3, // Limita il numero di righe
+                    overflow: TextOverflow.ellipsis, // Aggiunge "..." se il testo è troppo lungo
+                  ),
                 ),
             ],
           );

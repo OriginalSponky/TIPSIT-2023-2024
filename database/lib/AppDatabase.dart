@@ -3,7 +3,10 @@ import 'package:floor/floor.dart';
 import 'package:sqflite/sqflite.dart' as sqflite;
 
 part 'AppDatabase.g.dart';
-@entity
+
+
+
+@Entity(tableName: 'Post')
 class Post {
   @primaryKey
   final int id;
@@ -12,11 +15,20 @@ class Post {
 
   Post(this.id, this.title, this.content);
 }
-
-@entity
+@Entity(
+  tableName: 'Comment',
+  foreignKeys: [
+    ForeignKey(
+      childColumns: ['postId'],
+      parentColumns: ['id'],
+      entity: Post,
+    ),
+  ],
+)
 class Comment {
   @primaryKey
   final int id;
+  @ColumnInfo(name: 'postId')
   final int postId; // foreign key referencing Post
   final String text;
 
