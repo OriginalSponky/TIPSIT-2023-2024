@@ -242,84 +242,69 @@ class _BachecaPageState extends State<BachecaPage> {
   @override
   void initState() {
     super.initState();
+    print('Init state called');
     _fetchNoticeBoardData();
   }
 
+
   Future<void> _fetchNoticeBoardData() async {
-    final url = 'http://192.168.1.11/P002_SmartCommunication/sito/serverRest.php/?action=noticeBoard';
-    final data = {
-      'id': widget.ident,
-      'token': widget.token,
-    };
+  final url = 'http://192.168.1.11/P002_SmartCommunication/sito/serverRest.php/?action=noticeBoard';
+  final data = {
+    'id': widget.ident,
+    'token': widget.token,
+  };
 
-    try {
-      // Codifica i dati in formato URL
-      final encodedData = data.entries
-          .map((entry) => '${Uri.encodeComponent(entry.key)}=${Uri.encodeComponent(entry.value)}')
-          .join('&');
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: data,
+    );
 
-      // Richiesta POST
-      final response = await http.post(
-        Uri.parse(url),
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: encodedData,
-      );
+    print('Response status code: ${response.statusCode}');
+    print('Response body: ${response.body}');
 
-      // Stampa per il debug
-      print('Codice di stato della risposta: ${response.statusCode}');
-      print('Corpo della risposta: ${response.body}');
+    if (response.statusCode == 200) {
+  final responseData = json.decode(response.body);
+  print('JSON returned by noticeBoard: $responseData');
 
-      if (response.statusCode == 200) {
-        // Decodifica della risposta JSON
-        final responseData = json.decode(response.body);
-
-        // Controlla che il campo 'notices' esista nella risposta JSON
-        if (responseData.containsKey('notices')) {
-          final List<dynamic> notices = responseData['notices'];
-
-          // Mappa i dati della risposta nella lista `noticeBoardData`
-          List<Map<String, dynamic>> noticeBoardData = [];
-          for (var notice in notices) {
-            Map<String, dynamic> noticeData = {
-              'nameN': notice['nameN'],
-              'num': notice['num'],
-              'category': notice['category'],
-              'dateN': notice['dateN'],
-              'evtCode': notice['evtCode'],
-            };
-            noticeBoardData.add(noticeData);
-          }
-
-          // Aggiorna lo stato con i dati caricati
-          setState(() {
-            _noticeBoardData = noticeBoardData;
-            _isLoading = false;
-          });
-        } else {
-          // Se la chiave 'notices' non esiste nella risposta JSON, gestisci l'errore
-          print('Chiave "notices" non trovata nella risposta JSON');
-          setState(() {
-            _isLoading = false;
-          });
-        }
-      } else {
-        // Gestisci errori di risposta HTTP
-        print('Errore durante la richiesta: ${response.statusCode}');
-        print('Corpo della risposta: ${response.body}');
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
-      // Gestisci gli errori di richiesta
-      print('Errore durante la richiesta: $e');
-      setState(() {
-        _isLoading = false;
-      });
+  if (responseData is List && responseData.isNotEmpty) {
+    List<Map<String, dynamic>> noticeBoardData = [];
+    for (var notice in responseData) {
+      Map<String, dynamic> noticeData = {
+        'nameN': notice['nameN'] ?? '',
+        'num': notice['num'] ?? '',
+        'category': notice['category'] ?? '',
+        'dateN': notice['dateN'] ?? '',
+        'evtCode': notice['evtCode'] ?? '',
+      };
+      noticeBoardData.add(noticeData);
     }
+
+    setState(() {
+      _noticeBoardData = noticeBoardData;
+      _isLoading = false;
+    });
+  } else {
+    print('Empty or invalid response data');
+    setState(() {
+      _isLoading = false;
+    });
   }
+} else {
+  print('Error during request: ${response.statusCode}');
+  setState(() {
+    _isLoading = false;
+  });
+}
+  } catch (e) {
+    print('Error during request: $e');
+    setState(() {
+      _isLoading = false;
+    });
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -328,28 +313,39 @@ class _BachecaPageState extends State<BachecaPage> {
         title: Text('Bacheca'),
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: DataTable(
-                columns: const [
-                  DataColumn(label: Text('Name')),
-                  DataColumn(label: Text('Num')),
-                  DataColumn(label: Text('Category')),
-                  DataColumn(label: Text('Date')),
-                  DataColumn(label: Text('Event Code')),
-                ],
-                rows: _noticeBoardData.map((data) {
-                  return DataRow(cells: [
-                    DataCell(Text(data['nameN'] ?? '')),
-                    DataCell(Text(data['num'] ?? '')),
-                    DataCell(Text(data['category'] ?? '')),
-                    DataCell(Text(data['dateN'] ?? '')),
-                    DataCell(Text(data['evtCode'] ?? '')),
-                  ]);
-                }).toList(),
+  ? Center(child: CircularProgressIndicator())
+  : SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: DataTable(
+          columnSpacing: 20, // Puoi regolare lo spazio tra le colonne se necessario
+          columns: [
+            DataColumn(
+              label: SizedBox(
+                width: 50, // Imposta la larghezza massima per la colonna del nome
+                child: Text('Name'),
               ),
+              numeric: false, // Imposta numeric su false per abilitare il wrapping del testo
             ),
+            DataColumn(label: Text('Num')),
+            DataColumn(label: Text('Category')),
+            DataColumn(label: Text('Date')),
+            DataColumn(label: Text('Event Code')),
+          ],
+          dataRowHeight: 50, // Altezza di ogni riga della tabella
+          rows: _noticeBoardData.map((data) {
+            return DataRow(cells: [
+              DataCell(Text(data['nameN'])),
+              DataCell(Text(data['num'].toString())),
+              DataCell(Text(data['category'])),
+              DataCell(Text(data['dateN'])),
+              DataCell(Text(data['evtCode'])),
+            ]);
+          }).toList(),
+        ),
+      ),
+    ),
     );
   }
 }
