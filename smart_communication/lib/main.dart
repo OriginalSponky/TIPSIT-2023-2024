@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
+import 'dart:async';
 void main() {
   runApp(MyApp());
 }
@@ -185,7 +185,12 @@ class HomePage extends StatelessWidget {
   }
 
   void _navigateToModuli(BuildContext context) {
-    // Implementa la navigazione alla pagina dei moduli qui
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ModuliPage(), // Passa alla pagina dei moduli
+      ),
+    );
   }
 
   @override
@@ -213,7 +218,7 @@ class HomePage extends StatelessWidget {
                 ),
                 SizedBox(width: 20),
                 ElevatedButton(
-                  onPressed: () => _navigateToModuli(context),
+                  onPressed: () => _navigateToModuli(context), // Apri la pagina dei moduli
                   child: Text('Moduli'),
                 ),
               ],
@@ -308,44 +313,157 @@ class _BachecaPageState extends State<BachecaPage> {
 
   @override
   Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text('Bacheca'),
+    ),
+    body: _isLoading
+        ? Center(child: CircularProgressIndicator())
+        : SingleChildScrollView(
+            child: Container(
+              width: MediaQuery.of(context).size.width, // Larghezza massima consentita
+              child: DataTable(
+                columnSpacing: 2, // Spazio tra le colonne
+                columns: [
+                  DataColumn(
+                    label: Text('Name'),
+                    numeric: false,
+                  ),
+                  DataColumn(label: Text('Num')),
+                  DataColumn(label: Text('Category')),
+                  DataColumn(label: Text('Date')),
+                  DataColumn(label: Text('Event Code')),
+                ],
+                dataRowHeight: 50, // Altezza di ogni riga della tabella
+                rows: _noticeBoardData.map((data) {
+                  return DataRow(cells: [
+                    DataCell(Text(data['nameN'])),
+                    DataCell(Text(data['num'].toString())),
+                    DataCell(Text(data['category'])),
+                    DataCell(Text(data['dateN'])),
+                    DataCell(Text(data['evtCode'])),
+                  ]);
+                }).toList(),
+              ),
+            ),
+          ),
+  );
+}
+
+}
+class ModuliPage extends StatefulWidget {
+  @override
+  _ModuliPageState createState() => _ModuliPageState();
+}
+
+class _ModuliPageState extends State<ModuliPage> {
+  bool _isLoading = true;
+  List<Map<String, dynamic>> _moduliData = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchModuliData();
+  }
+
+   Future<void> _fetchModuliData() async {
+    final url = 'http://192.168.1.11/P002_SmartCommunication/sito/serverRest.php/?action=listM';
+
+    final data = {
+      'id': '1', // Passa il numero fisso come parametro 'id'
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: data,
+      );
+
+      print('Response status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      // Stampiamo il body della risposta nel console di debug
+      debugPrint('Body della risposta dei moduli: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        print('JSON returned by listM: $responseData');
+
+        if (responseData is List && responseData.isNotEmpty) {
+          List<Map<String, dynamic>> moduliData = [];
+          for (var modulo in responseData) {
+            Map<String, dynamic> moduloData = {
+              'nameM': modulo['name'] ?? '',
+              // Aggiungi altre proprietà del modulo se necessario
+            };
+            moduliData.add(moduloData);
+          }
+
+          setState(() {
+            _moduliData = moduliData;
+            _isLoading = false;
+          });
+        } else {
+          print('Empty or invalid response data');
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      } else {
+        print('Error during request: ${response.statusCode}');
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error during request: $e');
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bacheca'),
+        title: Text('Moduli'),
       ),
       body: _isLoading
-  ? Center(child: CircularProgressIndicator())
-  : SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: DataTable(
-          columnSpacing: 20, // Puoi regolare lo spazio tra le colonne se necessario
-          columns: [
-            DataColumn(
-              label: SizedBox(
-                width: 50, // Imposta la larghezza massima per la colonna del nome
-                child: Text('Name'),
+          ? Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: DataTable(
+                  columnSpacing: 20, // Spazio tra le colonne
+                  columns: [
+                    DataColumn(
+                      label: SizedBox(
+                        width: 100, // Larghezza massima per la colonna del nome
+                        child: Center(child: Text('Name')),
+                      ),
+                      numeric: false,
+                    ),
+                    DataColumn(
+                      label: Center(child: Icon(Icons.download)), // Icona del download centrata
+                    ),
+                  ],
+                  dataRowHeight: 50, // Altezza di ogni riga della tabella
+                  rows: _moduliData.map((data) {
+                    return DataRow(cells: [
+                      DataCell(
+                        Center(child: Text(data['nameM'])),
+                      ),
+                      DataCell(
+                        Center(child: Icon(Icons.download)), // Icona del download centrata
+                      ),
+                    ]);
+                  }).toList(),
+                ),
               ),
-              numeric: false, // Imposta numeric su false per abilitare il wrapping del testo
             ),
-            DataColumn(label: Text('Num')),
-            DataColumn(label: Text('Category')),
-            DataColumn(label: Text('Date')),
-            DataColumn(label: Text('Event Code')),
-          ],
-          dataRowHeight: 50, // Altezza di ogni riga della tabella
-          rows: _noticeBoardData.map((data) {
-            return DataRow(cells: [
-              DataCell(Text(data['nameN'])),
-              DataCell(Text(data['num'].toString())),
-              DataCell(Text(data['category'])),
-              DataCell(Text(data['dateN'])),
-              DataCell(Text(data['evtCode'])),
-            ]);
-          }).toList(),
-        ),
-      ),
-    ),
     );
   }
 }
